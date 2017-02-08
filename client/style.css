@@ -1,0 +1,61 @@
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  color: #fff;
+}
+
+.menu {
+  height: 100px;
+  text-align: center;
+  background-color: #78A3BB;
+  font-size: 50px;
+  color: #fff;
+  line-height: 100px;
+}
+
+.main {
+  padding: 100px;
+  height: 600px;
+  background-color: gray;
+}
+
+.table {
+  background-color: blue;
+  width: 800px;
+  height: 400px;
+  margin: 0 auto;
+}
+
+.side {
+  width: 50%;
+  height: 400px;
+  display: inline-block;
+  border: 5px solid #fff;
+  box-sizing: border-box;
+}
+
+.dropdown {
+  padding: 50px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.user {
+  width: 50%;
+  margin: 0 auto;
+  border: 1px solid #fff;
+  padding: 50px;
+  text-align: center;
+}
+
+.score {
+  padding: 50px;
+  text-align: center;
+}
+
+.btn {
+  padding: 50px;
+  margin: 0 auto;
+  text-align: center;
+}
