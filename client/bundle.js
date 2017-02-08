@@ -9478,31 +9478,64 @@ var App = function (_Component) {
     // function bindings
     var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
+    _this.handleOption = _this.handleOption.bind(_this);
     _this.handleChange = _this.handleChange.bind(_this);
     _this.handleSubmit = _this.handleSubmit.bind(_this);
 
     _this.state = {
+      users: ['bob', 'yum'],
+      user1: '',
+      user2: '',
       user1score: 0,
-      user2score: 0
+      user2score: 0,
+      winner: '',
+      loser: ''
     };
     return _this;
   }
 
-  // functions
-
-
   _createClass(App, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var _this2 = this;
+
+      var userArr = [];
+
+      $.get('/users', function (data) {
+        // console.log(data);
+        data.forEach(function (user) {
+          return userArr.push(user.name);
+        });
+        _this2.setState({ users: userArr });
+      });
+    }
+
+    // functions
+
+  }, {
+    key: 'handleOption',
+    value: function handleOption(event) {
+      console.log(event.target.value);
+      console.log(event.target.id);
+      event.target.id === 'side1' ? this.setState({ user1: event.target.value }) : this.setState({ user2: event.target.value });
+    }
+  }, {
     key: 'handleChange',
     value: function handleChange(event) {
-      this.setState({ score: event.target.value });
-      console.log(event.target.id);
-      console.log(event.target.value);
+      event.target.id === 'side1' ? this.setState({ user1score: event.target.value }) : this.setState({ user2score: event.target.value });
     }
   }, {
     key: 'handleSubmit',
     value: function handleSubmit(event) {
-      console.log('Submitted scores: ' + this.state.user1score);
-      event.preventDefault();
+      this.state.user1score > this.state.user2score ? this.setState({ winner: this.state.user1, loser: this.state.user2 }) : this.setState({ winner: this.state.user2, loser: this.state.user1 });
+
+      console.log('winner', this.state.winner, 'loser', this.state.loser);
+      console.log('Scores submitted: ' + this.state.user1 + ':' + this.state.user1score + ',' + this.state.user2 + ':' + this.state.user2score);
+
+      // post to server
+      // $.post()
+
+      // event.preventDefault();
     }
 
     // displayed on page
@@ -9514,7 +9547,7 @@ var App = function (_Component) {
         'div',
         null,
         _react2.default.createElement(_Menu2.default, { className: 'menu' }),
-        _react2.default.createElement(_Main2.default, { handleChange: this.handleChange, className: 'main' })
+        _react2.default.createElement(_Main2.default, { handleOption: this.handleOption, handleChange: this.handleChange, handleSubmit: this.handleSubmit, users: this.state.users, className: 'main' })
       );
     }
   }]);
@@ -9584,28 +9617,28 @@ var _react2 = _interopRequireDefault(_react);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
-
 var Dropdown = function Dropdown(_ref) {
-  _objectDestructuringEmpty(_ref);
+  var handleOption = _ref.handleOption,
+      users = _ref.users,
+      id = _ref.id;
 
-  var users = ['curt', 'joe', 'jon', 'mike'];
+  // const users = ['curt', 'joe', 'jon', 'mike'];
   var options = [];
 
   users.forEach(function (user, i) {
     options.push(_react2.default.createElement(
-      'option',
+      "option",
       { key: i, value: user },
       user
     ));
   });
 
   return _react2.default.createElement(
-    'div',
-    { className: 'dropdown' },
+    "div",
+    { className: "dropdown" },
     _react2.default.createElement(
-      'select',
-      null,
+      "select",
+      { onChange: handleOption, id: id },
       options
     )
   );
@@ -9639,13 +9672,15 @@ var _Btn2 = _interopRequireDefault(_Btn);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Main = function Main(_ref) {
-  var handleChange = _ref.handleChange,
-      handleSubmit = _ref.handleSubmit;
+  var handleOption = _ref.handleOption,
+      handleChange = _ref.handleChange,
+      handleSubmit = _ref.handleSubmit,
+      users = _ref.users;
 
   return _react2.default.createElement(
     'div',
     { className: 'main' },
-    _react2.default.createElement(_Table2.default, { handleChange: handleChange }),
+    _react2.default.createElement(_Table2.default, { handleOption: handleOption, handleChange: handleChange, users: users }),
     _react2.default.createElement(_Btn2.default, { handleSubmit: handleSubmit })
   );
 };
@@ -9743,15 +9778,17 @@ var _Score2 = _interopRequireDefault(_Score);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Side = function Side(_ref) {
-  var id = _ref.id,
-      handleChange = _ref.handleChange;
+  var handleOption = _ref.handleOption,
+      handleChange = _ref.handleChange,
+      users = _ref.users,
+      id = _ref.id;
 
   return _react2.default.createElement(
     'div',
     { className: 'Side' },
-    _react2.default.createElement(_Dropdown2.default, null),
+    _react2.default.createElement(_Dropdown2.default, { handleOption: handleOption, users: users, id: id }),
     _react2.default.createElement(_User2.default, null),
-    _react2.default.createElement(_Score2.default, { id: id })
+    _react2.default.createElement(_Score2.default, { handleChange: handleChange, id: id })
   );
 };
 
@@ -9779,14 +9816,16 @@ var _Side2 = _interopRequireDefault(_Side);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Table = function Table(_ref) {
-  var handleChange = _ref.handleChange,
-      handleSubmit = _ref.handleSubmit;
+  var handleOption = _ref.handleOption,
+      handleChange = _ref.handleChange,
+      handleSubmit = _ref.handleSubmit,
+      users = _ref.users;
 
   return _react2.default.createElement(
     'div',
     { className: 'table' },
-    _react2.default.createElement(_Side2.default, { handleChange: handleChange, id: 'side1' }),
-    _react2.default.createElement(_Side2.default, { handleChange: handleChange, id: 'side2' })
+    _react2.default.createElement(_Side2.default, { handleOption: handleOption, handleChange: handleChange, users: users, id: 'side1' }),
+    _react2.default.createElement(_Side2.default, { handleOption: handleOption, handleChange: handleChange, users: users, id: 'side2' })
   );
 };
 
@@ -22074,12 +22113,7 @@ var _App2 = _interopRequireDefault(_App);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// import css from 'style.css';
-
-_reactDom2.default.render(_react2.default.createElement(_App2.default, null), document.getElementById('contents')); /*
-                                                                                                                        ./client/index.js
-                                                                                                                        which is the webpack entry file
-                                                                                                                    */
+_reactDom2.default.render(_react2.default.createElement(_App2.default, null), document.getElementById('contents'));
 
 /***/ })
 /******/ ]);
