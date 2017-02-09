@@ -56,6 +56,7 @@ class App extends Component {
 
   handleSubmit(event) {
     if (!this.state.user1info.last_name || !this.state.user2info.last_name) return alert("Ghosts aren't allowed to play at this time...");
+    if (this.state.user1info.last_name === this.state.user2info.last_name) return alert("Playing with yourself isn't recommended in public");
 
     let user1infoCopy = JSON.parse(JSON.stringify(this.state.user1info));
     let user2infoCopy = JSON.parse(JSON.stringify(this.state.user2info));

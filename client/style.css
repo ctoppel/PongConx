@@ -83,6 +83,8 @@ input {
 }
 
 .side {
+  position: relative;
+  top: -10px;
   width: 50%;
   height: 300px;
   display: inline-block;

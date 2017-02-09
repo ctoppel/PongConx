@@ -9534,6 +9534,7 @@ var App = function (_Component) {
     key: 'handleSubmit',
     value: function handleSubmit(event) {
       if (!this.state.user1info.last_name || !this.state.user2info.last_name) return alert("Ghosts aren't allowed to play at this time...");
+      if (this.state.user1info.last_name === this.state.user2info.last_name) return alert("Playing with yourself isn't recommended in public");
 
       var user1infoCopy = JSON.parse(JSON.stringify(this.state.user1info));
       var user2infoCopy = JSON.parse(JSON.stringify(this.state.user2info));
