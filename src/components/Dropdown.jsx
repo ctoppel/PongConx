@@ -5,12 +5,13 @@ const Dropdown = ({ handleOption, users, id }) => {
   const options = [];
 
   users.forEach((user, i) => {
-    options.push(<option key={i} value={user}>{user}</option>);
+    options.push(<option key={i} value={JSON.stringify(user)}>{user.first_name}</option>);
   });
 
   return (
     <div className="dropdown">
-      <select onChange={handleOption} id={id}>
+      <select onChange={handleOption} id={id} >
+        <option value="" disabled selected>Select Player</option>
         {options}
       </select>
     </div>

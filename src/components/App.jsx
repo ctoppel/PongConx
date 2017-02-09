@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
-import Menu from './Menu.jsx'
-import Main from './Main.jsx'
+import React, { Component } from 'react';
+import Menu from './Menu.jsx';
+import Main from './Main.jsx';
 
 class App extends Component {
   constructor(props) {
@@ -13,10 +13,8 @@ class App extends Component {
 
     this.state = {
       users: [],
-      user1: '',
-      user2: '',
-      user1info: '',
-      user2info: '',
+      user1info: { first_name: '-', last_name: null, wins: '-', losses: '-', rating: '-' },
+      user2info: { first_name: '-', last_name: null, wins: '-', losses: '-', rating: '-' },
       user1score: 0,
       user2score: 0,
       winner: '',
@@ -28,44 +26,69 @@ class App extends Component {
     const userArr = [];
 
     $.get('/users', (data) => {
-      data.forEach(user => userArr.push(user.first_name));
+      data.forEach(user => userArr.push(user));
       this.setState({ users: userArr });
     });
-
   }
 
 
   // functions
   handleOption(event) {
-    console.log(event.target.value);
-    console.log(event.target.id);
+    // console.log(event.target.value);
+    // console.log(event.target.value);
+    // console.log(event.target.id);
     event.target.id === 'side1' ?
-    this.setState({ user1: event.target.value }) :
-    this.setState({ user2: event.target.value });
+    this.setState({ user1info: JSON.parse(event.target.value) }) :
+    this.setState({ user2info: JSON.parse(event.target.value) });
   }
 
   handleChange(event) {
-    $.get('/users', (data) => {
-      // console.log(data);
-      data.forEach(user => userArr.push(user.name));
-      this.setState({ users: userArr });
-    });
+    // $.get('/users', (data) => {
+    //   // console.log(data);
+    //   data.forEach(user => userArr.push(user.name));
+    //   this.setState({ users: userArr });
+    // });
 
     event.target.id === 'side1' ?
-    this.setState({ user1score: event.target.value }) :
-    this.setState({ user2score: event.target.value });
+    this.setState({ user1score: +event.target.value }) :
+    this.setState({ user2score: +event.target.value });
   }
 
   handleSubmit(event) {
-    this.state.user1score > this.state.user2score ?
-    this.setState({ winner: this.state.user1, loser: this.state.user2 }) :
-    this.setState({ winner: this.state.user2, loser: this.state.user1 });
+    if (!this.state.user1info.last_name || !this.state.user2info.last_name) return alert("Ghosts aren't allowed to play at this time...");
 
-    console.log('winner', this.state.winner, 'loser', this.state.loser);
-    console.log('Scores submitted: ' + this.state.user1 + ':' + this.state.user1score + ',' + this.state.user2 + ':' + this.state.user2score);
+    let user1infoCopy = JSON.parse(JSON.stringify(this.state.user1info));
+    let user2infoCopy = JSON.parse(JSON.stringify(this.state.user2info));
+
+    if (this.state.user1score > this.state.user2score) {
+      user1infoCopy.wins += 1;
+      user2infoCopy.losses += 1;
+      user1infoCopy.rating += 10;
+      user2infoCopy.rating -= 10;
+      this.setState({
+        user1info: user1infoCopy,
+        user2info: user2infoCopy,
+        winner: this.state.user1info.first_name,
+        loser: this.state.user2info.first_name,
+      });
+    } else if (this.state.user1score < this.state.user2score) {
+      user2infoCopy.wins += 1;
+      user1infoCopy.losses += 1;
+      user2infoCopy.rating += 10;
+      user1infoCopy.rating -= 10;
+      this.setState({
+        user1info: user1infoCopy,
+        user2info: user2infoCopy,
+        winner: this.state.user2info.first_name,
+        loser: this.state.user1info.first_name,
+      });
+    } else alert("You can't end on a tie! Get back out there and finish your game!");
+
 
     // post to server
-    // $.post()
+    $.post('/update', () => {
+
+    })
 
     // event.preventDefault();
   }
@@ -76,7 +99,7 @@ class App extends Component {
     return (
       <div>
         <Menu className="menu" />
-        <Main handleOption={this.handleOption} handleChange={this.handleChange} handleSubmit={this.handleSubmit} users={this.state.users} className="main" />
+        <Main handleOption={this.handleOption} handleChange={this.handleChange} handleSubmit={this.handleSubmit} users={this.state.users} user1info={this.state.user1info} user2info={this.state.user2info} className="main" />
       </div>
     );
   }

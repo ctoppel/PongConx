@@ -9483,9 +9483,9 @@ var App = function (_Component) {
     _this.handleSubmit = _this.handleSubmit.bind(_this);
 
     _this.state = {
-      users: ['bob', 'yum'],
-      user1: '',
-      user2: '',
+      users: [],
+      user1info: { first_name: '-', last_name: null, wins: '-', losses: '-', rating: '-' },
+      user2info: { first_name: '-', last_name: null, wins: '-', losses: '-', rating: '-' },
       user1score: 0,
       user2score: 0,
       winner: '',
@@ -9502,9 +9502,8 @@ var App = function (_Component) {
       var userArr = [];
 
       $.get('/users', function (data) {
-        // console.log(data);
         data.forEach(function (user) {
-          return userArr.push(user.name);
+          return userArr.push(user);
         });
         _this2.setState({ users: userArr });
       });
@@ -9515,25 +9514,56 @@ var App = function (_Component) {
   }, {
     key: 'handleOption',
     value: function handleOption(event) {
-      console.log(event.target.value);
-      console.log(event.target.id);
-      event.target.id === 'side1' ? this.setState({ user1: event.target.value }) : this.setState({ user2: event.target.value });
+      // console.log(event.target.value);
+      // console.log(event.target.value);
+      // console.log(event.target.id);
+      event.target.id === 'side1' ? this.setState({ user1info: JSON.parse(event.target.value) }) : this.setState({ user2info: JSON.parse(event.target.value) });
     }
   }, {
     key: 'handleChange',
     value: function handleChange(event) {
-      event.target.id === 'side1' ? this.setState({ user1score: event.target.value }) : this.setState({ user2score: event.target.value });
+      // $.get('/users', (data) => {
+      //   // console.log(data);
+      //   data.forEach(user => userArr.push(user.name));
+      //   this.setState({ users: userArr });
+      // });
+
+      event.target.id === 'side1' ? this.setState({ user1score: +event.target.value }) : this.setState({ user2score: +event.target.value });
     }
   }, {
     key: 'handleSubmit',
     value: function handleSubmit(event) {
-      this.state.user1score > this.state.user2score ? this.setState({ winner: this.state.user1, loser: this.state.user2 }) : this.setState({ winner: this.state.user2, loser: this.state.user1 });
+      if (!this.state.user1info.last_name || !this.state.user2info.last_name) return alert("Ghosts aren't allowed to play at this time...");
 
-      console.log('winner', this.state.winner, 'loser', this.state.loser);
-      console.log('Scores submitted: ' + this.state.user1 + ':' + this.state.user1score + ',' + this.state.user2 + ':' + this.state.user2score);
+      var user1infoCopy = JSON.parse(JSON.stringify(this.state.user1info));
+      var user2infoCopy = JSON.parse(JSON.stringify(this.state.user2info));
+
+      if (this.state.user1score > this.state.user2score) {
+        user1infoCopy.wins += 1;
+        user2infoCopy.losses += 1;
+        user1infoCopy.rating += 10;
+        user2infoCopy.rating -= 10;
+        this.setState({
+          user1info: user1infoCopy,
+          user2info: user2infoCopy,
+          winner: this.state.user1info.first_name,
+          loser: this.state.user2info.first_name
+        });
+      } else if (this.state.user1score < this.state.user2score) {
+        user2infoCopy.wins += 1;
+        user1infoCopy.losses += 1;
+        user2infoCopy.rating += 10;
+        user1infoCopy.rating -= 10;
+        this.setState({
+          user1info: user1infoCopy,
+          user2info: user2infoCopy,
+          winner: this.state.user2info.first_name,
+          loser: this.state.user1info.first_name
+        });
+      } else alert("You can't end on a tie! Get back out there and finish your game!");
 
       // post to server
-      // $.post()
+      $.post('/update', function () {});
 
       // event.preventDefault();
     }
@@ -9547,7 +9577,7 @@ var App = function (_Component) {
         'div',
         null,
         _react2.default.createElement(_Menu2.default, { className: 'menu' }),
-        _react2.default.createElement(_Main2.default, { handleOption: this.handleOption, handleChange: this.handleChange, handleSubmit: this.handleSubmit, users: this.state.users, className: 'main' })
+        _react2.default.createElement(_Main2.default, { handleOption: this.handleOption, handleChange: this.handleChange, handleSubmit: this.handleSubmit, users: this.state.users, user1info: this.state.user1info, user2info: this.state.user2info, className: 'main' })
       );
     }
   }]);
@@ -9592,7 +9622,7 @@ var Btn = function Btn(_ref) {
     { className: "btn" },
     _react2.default.createElement(
       "button",
-      { onClick: handleSubmit },
+      { className: "myButton", onClick: handleSubmit },
       "Submit results"
     )
   );
@@ -9628,8 +9658,8 @@ var Dropdown = function Dropdown(_ref) {
   users.forEach(function (user, i) {
     options.push(_react2.default.createElement(
       "option",
-      { key: i, value: user },
-      user
+      { key: i, value: JSON.stringify(user) },
+      user.first_name
     ));
   });
 
@@ -9639,6 +9669,11 @@ var Dropdown = function Dropdown(_ref) {
     _react2.default.createElement(
       "select",
       { onChange: handleOption, id: id },
+      _react2.default.createElement(
+        "option",
+        { value: "", disabled: true, selected: true },
+        "Select Player"
+      ),
       options
     )
   );
@@ -9675,12 +9710,14 @@ var Main = function Main(_ref) {
   var handleOption = _ref.handleOption,
       handleChange = _ref.handleChange,
       handleSubmit = _ref.handleSubmit,
-      users = _ref.users;
+      users = _ref.users,
+      user1info = _ref.user1info,
+      user2info = _ref.user2info;
 
   return _react2.default.createElement(
     'div',
     { className: 'main' },
-    _react2.default.createElement(_Table2.default, { handleOption: handleOption, handleChange: handleChange, users: users }),
+    _react2.default.createElement(_Table2.default, { handleOption: handleOption, handleChange: handleChange, users: users, user1info: user1info, user2info: user2info }),
     _react2.default.createElement(_Btn2.default, { handleSubmit: handleSubmit })
   );
 };
@@ -9781,13 +9818,15 @@ var Side = function Side(_ref) {
   var handleOption = _ref.handleOption,
       handleChange = _ref.handleChange,
       users = _ref.users,
+      user1info = _ref.user1info,
+      user2info = _ref.user2info,
       id = _ref.id;
 
   return _react2.default.createElement(
     'div',
     { className: 'Side' },
     _react2.default.createElement(_Dropdown2.default, { handleOption: handleOption, users: users, id: id }),
-    _react2.default.createElement(_User2.default, null),
+    _react2.default.createElement(_User2.default, { users: users, user1info: user1info, user2info: user2info, id: id }),
     _react2.default.createElement(_Score2.default, { handleChange: handleChange, id: id })
   );
 };
@@ -9819,13 +9858,15 @@ var Table = function Table(_ref) {
   var handleOption = _ref.handleOption,
       handleChange = _ref.handleChange,
       handleSubmit = _ref.handleSubmit,
-      users = _ref.users;
+      users = _ref.users,
+      user1info = _ref.user1info,
+      user2info = _ref.user2info;
 
   return _react2.default.createElement(
     'div',
     { className: 'table' },
-    _react2.default.createElement(_Side2.default, { handleOption: handleOption, handleChange: handleChange, users: users, id: 'side1' }),
-    _react2.default.createElement(_Side2.default, { handleOption: handleOption, handleChange: handleChange, users: users, id: 'side2' })
+    _react2.default.createElement(_Side2.default, { handleOption: handleOption, handleChange: handleChange, users: users, user1info: user1info, user2info: user2info, id: 'side1' }),
+    _react2.default.createElement(_Side2.default, { handleOption: handleOption, handleChange: handleChange, users: users, user1info: user1info, user2info: user2info, id: 'side2' })
   );
 };
 
@@ -9848,15 +9889,126 @@ var _react2 = _interopRequireDefault(_react);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
-
 var User = function User(_ref) {
-  _objectDestructuringEmpty(_ref);
+  var user1info = _ref.user1info,
+      user2info = _ref.user2info,
+      id = _ref.id;
 
-  return _react2.default.createElement(
-    "div",
-    { className: "user" },
-    "User Info"
+  function userInfo(id) {
+    if (id === 'side1') {
+      return _react2.default.createElement(
+        'div',
+        { className: 'user' },
+        _react2.default.createElement(
+          'div',
+          null,
+          _react2.default.createElement(
+            'span',
+            { className: 'user-info' },
+            'Name:'
+          ),
+          ' ',
+          user1info.first_name,
+          ' ',
+          user1info.last_name
+        ),
+        _react2.default.createElement(
+          'div',
+          null,
+          _react2.default.createElement(
+            'span',
+            { className: 'user-info' },
+            'Wins:'
+          ),
+          ' ',
+          user1info.wins
+        ),
+        _react2.default.createElement(
+          'div',
+          null,
+          _react2.default.createElement(
+            'span',
+            { className: 'user-info' },
+            'Losses:'
+          ),
+          ' ',
+          user1info.losses
+        ),
+        _react2.default.createElement(
+          'div',
+          null,
+          _react2.default.createElement(
+            'span',
+            { className: 'user-info' },
+            'Rating:'
+          ),
+          ' ',
+          user1info.rating
+        )
+      );
+    }
+    if (id === 'side2') {
+      return _react2.default.createElement(
+        'div',
+        { className: 'user' },
+        _react2.default.createElement(
+          'div',
+          null,
+          _react2.default.createElement(
+            'span',
+            { className: 'user-info' },
+            'Name:'
+          ),
+          ' ',
+          user2info.first_name,
+          ' ',
+          user2info.last_name
+        ),
+        _react2.default.createElement(
+          'div',
+          null,
+          _react2.default.createElement(
+            'span',
+            { className: 'user-info' },
+            'Wins:'
+          ),
+          ' ',
+          user2info.wins
+        ),
+        _react2.default.createElement(
+          'div',
+          null,
+          _react2.default.createElement(
+            'span',
+            { className: 'user-info' },
+            'Losses:'
+          ),
+          ' ',
+          user2info.losses
+        ),
+        _react2.default.createElement(
+          'div',
+          null,
+          _react2.default.createElement(
+            'span',
+            { className: 'user-info' },
+            'Rating:'
+          ),
+          ' ',
+          user2info.rating
+        )
+      );
+    }
+  }
+
+  return (
+    // <div className="user">
+    //   <div>{user1info.first_name} {user1info.last_name}</div>
+    //   <div>{user1info.wins}</div>
+    //   <div>{user1info.losses}</div>
+    //   <div>{user1info.rating}</div>
+    // </div>
+    userInfo(id)
   );
 };
 
