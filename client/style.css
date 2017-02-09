@@ -68,6 +68,12 @@ input {
   line-height: 100px;
 }
 
+.small-text {
+  position: relative;
+  top: -20px;
+  font-size: 20px;
+}
+
 .main {
   padding-top: 200px;
   height: 600px;

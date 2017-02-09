@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 const Menu = ({ }) => {
   return (
     <div className="menu">
-      PongConX
+      PongConX<span className="small-text">™</span>
     </div>
   )
 }

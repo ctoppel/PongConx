@@ -9750,7 +9750,12 @@ var Menu = function Menu(_ref) {
   return _react2.default.createElement(
     "div",
     { className: "menu" },
-    "PongConX"
+    "PongConX",
+    _react2.default.createElement(
+      "span",
+      { className: "small-text" },
+      "\u2122"
+    )
   );
 };
 
