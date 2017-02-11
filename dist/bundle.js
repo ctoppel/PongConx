@@ -9514,27 +9514,18 @@ var App = function (_Component) {
   }, {
     key: 'handleOption',
     value: function handleOption(event) {
-      // console.log(event.target.value);
-      // console.log(event.target.value);
-      // console.log(event.target.id);
       event.target.id === 'side1' ? this.setState({ user1info: JSON.parse(event.target.value) }) : this.setState({ user2info: JSON.parse(event.target.value) });
     }
   }, {
     key: 'handleChange',
     value: function handleChange(event) {
-      // $.get('/users', (data) => {
-      //   // console.log(data);
-      //   data.forEach(user => userArr.push(user.name));
-      //   this.setState({ users: userArr });
-      // });
-
       event.target.id === 'side1' ? this.setState({ user1score: +event.target.value }) : this.setState({ user2score: +event.target.value });
     }
   }, {
     key: 'handleSubmit',
     value: function handleSubmit(event) {
-      if (!this.state.user1info.last_name || !this.state.user2info.last_name) return alert("Ghosts aren't allowed to play at this time...");
-      if (this.state.user1info.last_name === this.state.user2info.last_name) return alert("Playing with yourself isn't recommended in public");
+      if (!this.state.user1info.id || !this.state.user2info.id) return alert("Ghosts aren't allowed to play at this time...");
+      if (this.state.user1info.id === this.state.user2info.id) return alert("Playing with yourself isn't recommended in public");
 
       var user1infoCopy = JSON.parse(JSON.stringify(this.state.user1info));
       var user2infoCopy = JSON.parse(JSON.stringify(this.state.user2info));
@@ -9565,8 +9556,6 @@ var App = function (_Component) {
 
       // post to server
       $.post('/update', function () {});
-
-      // event.preventDefault();
     }
 
     // displayed on page
@@ -9660,7 +9649,10 @@ var Dropdown = function Dropdown(_ref) {
     options.push(_react2.default.createElement(
       "option",
       { key: i, value: JSON.stringify(user) },
-      user.first_name
+      user.first_name,
+      " ",
+      user.last_name.slice(0, 1),
+      "."
     ));
   });
 

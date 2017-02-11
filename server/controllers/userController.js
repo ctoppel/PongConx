@@ -1,16 +1,19 @@
-const db = require('../models/userModel');
+const User = require('../models/userModel');
 
 function getUsers(req, res) {
-  const users = [];
-  const dbQuery = db.conn.query('SELECT * FROM users', (err, results) => {
-    if (err) return res.status(404).send('Not Found');
+  User.findAll().then((users) => {
+    res.status(200).send(users);
   });
-  dbQuery.on('row', row => users.push(row));
-  dbQuery.on('end', () => res.status(200).send(users));
 }
 
-// function show(req, res) {
-//   return res.status(404).send('Not Found');
-// }
+function addUser(req, res) {
+  User.create({
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    password: req.body.password,
+  })
+  .then(() => res.send('User added'))
+  .catch(err => res.send(err));
+}
 
-module.exports = { getUsers };
+module.exports = { getUsers, addUser };

@@ -81,7 +81,7 @@ input {
 }
 
 .table {
-  background-image: url("images/pong_table.jpg");
+  background-image: url("assets/images/pong_table.jpg");
   background-size: cover;
   width: 800px;
   height: 300px;

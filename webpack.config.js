@@ -1,19 +1,9 @@
-/*
-    ./webpack.config.js
-*/
 const path = require('path');
-// const HtmlWebpackPlugin = require('html-webpack-plugin');
-//
-// const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
-//   template: './client/index.html',
-//   filename: 'index.html',
-//   inject: 'body',
-// });
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './client/index.js',
   output: {
-    path: path.resolve('client'),
+    path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',
   },
   module: {
@@ -22,5 +12,4 @@ module.exports = {
       { test: /\.jsx$/, loader: 'babel-loader', exclude: /node_modules/ },
     ],
   },
-  // plugins: [HtmlWebpackPluginConfig],
 };

@@ -31,32 +31,22 @@ class App extends Component {
     });
   }
 
-
   // functions
   handleOption(event) {
-    // console.log(event.target.value);
-    // console.log(event.target.value);
-    // console.log(event.target.id);
     event.target.id === 'side1' ?
     this.setState({ user1info: JSON.parse(event.target.value) }) :
     this.setState({ user2info: JSON.parse(event.target.value) });
   }
 
   handleChange(event) {
-    // $.get('/users', (data) => {
-    //   // console.log(data);
-    //   data.forEach(user => userArr.push(user.name));
-    //   this.setState({ users: userArr });
-    // });
-
     event.target.id === 'side1' ?
     this.setState({ user1score: +event.target.value }) :
     this.setState({ user2score: +event.target.value });
   }
 
   handleSubmit(event) {
-    if (!this.state.user1info.last_name || !this.state.user2info.last_name) return alert("Ghosts aren't allowed to play at this time...");
-    if (this.state.user1info.last_name === this.state.user2info.last_name) return alert("Playing with yourself isn't recommended in public");
+    if (!this.state.user1info.id || !this.state.user2info.id) return alert("Ghosts aren't allowed to play at this time...");
+    if (this.state.user1info.id === this.state.user2info.id) return alert("Playing with yourself isn't recommended in public");
 
     let user1infoCopy = JSON.parse(JSON.stringify(this.state.user1info));
     let user2infoCopy = JSON.parse(JSON.stringify(this.state.user2info));
@@ -85,15 +75,11 @@ class App extends Component {
       });
     } else alert("You can't end on a tie! Get back out there and finish your game!");
 
-
     // post to server
     $.post('/update', () => {
 
-    })
-
-    // event.preventDefault();
+    });
   }
-
 
   // displayed on page
   render() {
