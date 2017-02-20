@@ -63,9 +63,15 @@ input {
   height: 100px;
   text-align: center;
   background: linear-gradient(to bottom, #7b9db7 , black);
-  font-size: 50px;
+  /*font-size: 50px;*/
   color: #fff;
-  line-height: 100px;
+  /*line-height: 100px;*/
+}
+
+.login {
+  float: right;
+  color: green;
+  background: red;
 }
 
 .small-text {

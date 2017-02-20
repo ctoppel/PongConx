@@ -16,4 +16,14 @@ function addUser(req, res) {
   .catch(err => res.send(err));
 }
 
-module.exports = { getUsers, addUser };
+function updateUser(req, res) {
+  User.update({
+    wins: req.body.wins,
+    losses: req.body.losses,
+    rating: req.body.rating,
+  })
+  .then(() => res.send('User updated'))
+  .catch(err => res.send(err));
+}
+
+module.exports = { getUsers, addUser, updateUser };

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 const User = ({ user1info, user2info, id }) => {
   function userInfo (id) {

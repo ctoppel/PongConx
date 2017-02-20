@@ -1,13 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-const Btn = ({ handleSubmit }) => {
-  return (
+const Btn = ({ handleSubmit }) =>
+  (
     <div className="btn">
       <button className="myButton" onClick={handleSubmit}>
         Submit results
       </button>
     </div>
   );
-};
 
 export default Btn;

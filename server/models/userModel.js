@@ -35,13 +35,8 @@ const User = connection.define('users', {
   },
 });
 
-User.sync();
-// .then(() => {
-//   User.create({
-//     first_name: 'Rodrigo',
-//     last_name: 'Leme',
-//     password: 'pig',
-//   });
-// });
+User.sync(
+  // { force: true }
+);
 
 module.exports = User;

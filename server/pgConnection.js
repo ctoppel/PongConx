@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
 
-const connection = new Sequelize('postgres://wjltrxlh:qLfbR78yVGxCmmQbLe08qaLyM3-V25Eg@babar.elephantsql.com:5432/wjltrxlh');
+const connection = new Sequelize('postgres://vyjwoprz:7IsHDqgrZrIf6HorWC6MZBlqdhH8w0dh@babar.elephantsql.com:5432/vyjwoprz');
 
 module.exports = connection;
